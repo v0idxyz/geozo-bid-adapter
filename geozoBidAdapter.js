@@ -67,14 +67,14 @@ export const spec = {
     if (response && response.seatbid && response.seatbid[0].bid && response.seatbid[0].bid[0]) {
       const bid = response.seatbid[0].bid[0];
       const adm = JSON.parse(bid.adm);
-      //pushing it into banner ad units cause ain't no way i make native requests
+
       let bidResponse = {
         requestId: bidRequest.data.id,
         cpm: bid.price,
         width: adm.assets[1].img.w,
         height: adm.assets[1].img.h,
         creativeId: bid.crid,
-        currency: 'USD',
+        currency: response.cur,
         netRevenue: true,
         ttl: 300,
         ad: `<div class='ad' style='background-color: rgba(255, 255, 255, 0.8);'>
@@ -82,13 +82,20 @@ export const spec = {
                  <img src='${adm.assets[1].img.url}' alt='${adm.assets[0].title.text}' style='width: 320px; height: 180px;'>
                  <h2>${adm.assets[0].title.text}</h2>
                </a>
-             </div>`
+             </div>`,
+        nurl: bid.nurl
       };
 
       bidResponses.push(bidResponse);
     }
 
     return bidResponses;
+  },
+
+  onBidWon: function(bid) {
+    if (bid.nurl) {
+      (new Image()).src = bid.nurl;
+    }
   }
 };
 
